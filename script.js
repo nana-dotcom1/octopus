@@ -1,15 +1,9 @@
-const startBtn    = document.getElementById('startBtn');
 const introScreen = document.getElementById('introScreen');
-const oceanScreen = document.getElementById('oceanScreen');
+const startBtn    = document.getElementById('startBtn');
 const canvas      = document.getElementById('peekholeCanvas');
 const ctx         = canvas.getContext('2d');
 
-let mouseX = -999;
-let mouseY = -999;
-let peekRadius = 0;
-let targetRadius = 0;
-const MAX_RADIUS = 140;
-
+// ---- canvas size ----
 function resizeCanvas() {
   canvas.width  = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -17,165 +11,149 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// track mouse
-document.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-  targetRadius = MAX_RADIUS;
+// ---- peekhole ----
+let mx = -999, my = -999;
+let radius = 0, targetR = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX;
+  my = e.clientY;
+  targetR = 150;
 });
 
-document.addEventListener('mouseleave', () => {
-  targetRadius = 0;
-});
+document.addEventListener('mouseleave', () => { targetR = 0; });
 
-function drawMask() {
+(function drawLoop() {
+  // clear to fully transparent first
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  radius += (targetR - radius) * 0.1;
 
-  // smooth lerp
-  peekRadius += (targetRadius - peekRadius) * 0.1;
+  if (radius > 0.5) {
+    // draw black everywhere EXCEPT the hole using a cutout shape
+    ctx.globalCompositeOperation = 'source-over';
+    
+    // fill entire canvas black
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // draw solid black covering everything
-  ctx.globalCompositeOperation = 'source-over';
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  if (peekRadius > 1) {
-    // punch transparent hole through the black
+    // cut the hole out — this makes it transparent = ocean shows through
     ctx.globalCompositeOperation = 'destination-out';
-
-    const grad = ctx.createRadialGradient(
-      mouseX, mouseY, peekRadius * 0.2,
-      mouseX, mouseY, peekRadius
-    );
-    grad.addColorStop(0,   'rgba(0,0,0,1)');
-    grad.addColorStop(0.75,'rgba(0,0,0,0.8)');
-    grad.addColorStop(1,   'rgba(0,0,0,0)');
-
+    const hole = ctx.createRadialGradient(mx, my, 0, mx, my, radius);
+    hole.addColorStop(0,    'rgba(0,0,0,1)');
+    hole.addColorStop(0.65, 'rgba(0,0,0,1)');
+    hole.addColorStop(0.88, 'rgba(0,0,0,0.5)');
+    hole.addColorStop(1,    'rgba(0,0,0,0)');
     ctx.beginPath();
-    ctx.arc(mouseX, mouseY, peekRadius, 0, Math.PI * 2);
-    ctx.fillStyle = grad;
+    ctx.arc(mx, my, radius, 0, Math.PI * 2);
+    ctx.fillStyle = hole;
     ctx.fill();
 
-    // grainy ring
+    // reset composite before next frame
     ctx.globalCompositeOperation = 'source-over';
-    ctx.beginPath();
-    ctx.arc(mouseX, mouseY, peekRadius * 0.92, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
-    ctx.lineWidth = 20;
-    ctx.stroke();
+
+  } else {
+    // no mouse — full black
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 
-  requestAnimationFrame(drawMask);
+  requestAnimationFrame(drawLoop);
+})();
+
+// ---- pop sound ----
+function playPop() {
+  try {
+    const ac  = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ac.createOscillator();
+    const g   = ac.createGain();
+    const f   = ac.createBiquadFilter();
+    osc.connect(f); f.connect(g); g.connect(ac.destination);
+    f.type = 'bandpass';
+    f.frequency.setValueAtTime(800, ac.currentTime);
+    f.frequency.exponentialRampToValueAtTime(150, ac.currentTime + 0.1);
+    osc.frequency.setValueAtTime(500, ac.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(80, ac.currentTime + 0.1);
+    g.gain.setValueAtTime(0.5, ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.12);
+    osc.start(); osc.stop(ac.currentTime + 0.12);
+  } catch(e) {}
 }
-drawMask();
 
-// button click
 startBtn.addEventListener('click', () => {
-  startBtn.classList.add('clicked');
-
-  setTimeout(() => {
-    introScreen.classList.add('fade-out');
-    document.body.classList.add('ocean-active');
-  }, 300);
-
-  setTimeout(() => {
-    introScreen.style.display = 'none';
-    canvas.style.display = 'none';
-    startOcean();
-  }, 1100);
+  playPop();
+  introScreen.style.display = 'none';
+  canvas.style.display = 'none';
+  startOcean();
 });
 
+// ---- ocean canvas effects ----
 function startOcean() {
-  const oceanCanvas = document.createElement('canvas');
-  oceanCanvas.style.cssText = `
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    z-index: 1;
-    pointer-events: none;
-    mix-blend-mode: screen;
-    opacity: 0.6;
-  `;
-  document.body.appendChild(oceanCanvas);
+  const oc = document.createElement('canvas');
+  oc.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;z-index:1;pointer-events:none;mix-blend-mode:screen;opacity:0.5;';
+  document.body.appendChild(oc);
+  const ox = oc.getContext('2d');
 
-  const octx = oceanCanvas.getContext('2d');
+  function resizeOc() { oc.width = window.innerWidth; oc.height = window.innerHeight; }
+  resizeOc();
+  window.addEventListener('resize', resizeOc);
 
-  function resize() {
-    oceanCanvas.width  = window.innerWidth;
-    oceanCanvas.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  let time = 0;
-
+  let t = 0;
   const beams = [
-    { originX: 0.28, originY: 0.0, angle: 0.55, width: 60, opacity: 0.12 },
-    { originX: 0.32, originY: 0.0, angle: 0.62, width: 40, opacity: 0.10 },
-    { originX: 0.36, originY: 0.0, angle: 0.70, width: 80, opacity: 0.08 },
-    { originX: 0.40, originY: 0.0, angle: 0.50, width: 35, opacity: 0.09 },
-    { originX: 0.24, originY: 0.0, angle: 0.45, width: 50, opacity: 0.07 },
+    { ox: 0.28, a: 0.55, w: 60, op: 0.12 },
+    { ox: 0.32, a: 0.62, w: 40, op: 0.10 },
+    { ox: 0.36, a: 0.70, w: 80, op: 0.08 },
+    { ox: 0.40, a: 0.50, w: 35, op: 0.09 },
+    { ox: 0.24, a: 0.45, w: 50, op: 0.07 },
   ];
 
-  function draw() {
-    octx.clearRect(0, 0, oceanCanvas.width, oceanCanvas.height);
+  (function draw() {
+    ox.clearRect(0, 0, oc.width, oc.height);
 
-    beams.forEach((beam, i) => {
-      const x = beam.originX * oceanCanvas.width;
-      const y = beam.originY * oceanCanvas.height;
-      const length = oceanCanvas.height * 1.4;
-      const pulse = 0.5 + 0.5 * Math.sin(time * 0.6 + i * 1.2);
-      const currentOpacity = beam.opacity * (0.6 + 0.4 * pulse);
-      const currentWidth = beam.width * (0.85 + 0.15 * pulse);
-      const endX = x + Math.cos(beam.angle + Math.PI / 2) * length;
-      const endY = y + Math.sin(beam.angle + Math.PI / 2) * length;
-
-      const gradient = octx.createLinearGradient(x, y, endX, endY);
-      gradient.addColorStop(0,   `rgba(255,255,220,${currentOpacity})`);
-      gradient.addColorStop(0.4, `rgba(255,255,220,${currentOpacity * 0.5})`);
-      gradient.addColorStop(1,   `rgba(255,255,220,0)`);
-
-      octx.save();
-      octx.translate(x, y);
-      octx.rotate(beam.angle);
-      octx.beginPath();
-      octx.moveTo(-currentWidth / 2, 0);
-      octx.lineTo( currentWidth / 2, 0);
-      octx.lineTo( currentWidth / 2 * 2.5, length);
-      octx.lineTo(-currentWidth / 2 * 2.5, length);
-      octx.closePath();
-      octx.fillStyle = gradient;
-      octx.fill();
-      octx.restore();
+    beams.forEach((b, i) => {
+      const x   = b.ox * oc.width;
+      const len = oc.height * 1.4;
+      const pulse = 0.5 + 0.5 * Math.sin(t * 0.6 + i * 1.2);
+      const op  = b.op * (0.6 + 0.4 * pulse);
+      const cw  = b.w  * (0.85 + 0.15 * pulse);
+      const ex  = x + Math.cos(b.a + Math.PI / 2) * len;
+      const ey  = Math.sin(b.a + Math.PI / 2) * len;
+      const gr  = ox.createLinearGradient(x, 0, ex, ey);
+      gr.addColorStop(0,   `rgba(255,255,220,${op})`);
+      gr.addColorStop(0.4, `rgba(255,255,220,${op*0.5})`);
+      gr.addColorStop(1,   `rgba(255,255,220,0)`);
+      ox.save();
+      ox.translate(x, 0);
+      ox.rotate(b.a);
+      ox.beginPath();
+      ox.moveTo(-cw/2, 0); ox.lineTo(cw/2, 0);
+      ox.lineTo(cw*1.25, len); ox.lineTo(-cw*1.25, len);
+      ox.closePath();
+      ox.fillStyle = gr;
+      ox.fill();
+      ox.restore();
     });
 
     for (let layer = 0; layer < 3; layer++) {
-      const speed     = 0.3 + layer * 0.2;
-      const amplitude = 15  + layer * 10;
-      const frequency = 0.005 + layer * 0.002;
-      const alpha     = 0.04  - layer * 0.01;
-
-      octx.beginPath();
-      octx.moveTo(0, oceanCanvas.height / 2);
-
-      for (let x = 0; x < oceanCanvas.width; x += 5) {
-        const y =
-          oceanCanvas.height / 2 +
-          Math.sin(x * frequency + time * speed) * amplitude +
-          Math.sin(x * frequency * 2 + time * speed * 1.5) * (amplitude / 2);
-        octx.lineTo(x, y);
+      const sp = 0.3 + layer * 0.2;
+      const am = 15  + layer * 10;
+      const fr = 0.005 + layer * 0.002;
+      const al = 0.04  - layer * 0.01;
+      ox.beginPath();
+      ox.moveTo(0, oc.height / 2);
+      for (let x = 0; x < oc.width; x += 5) {
+        const y = oc.height/2
+          + Math.sin(x * fr + t * sp) * am
+          + Math.sin(x * fr * 2 + t * sp * 1.5) * (am/2);
+        ox.lineTo(x, y);
       }
-
-      octx.lineTo(oceanCanvas.width, oceanCanvas.height);
-      octx.lineTo(0, oceanCanvas.height);
-      octx.closePath();
-      octx.fillStyle = `rgba(100,200,200,${alpha})`;
-      octx.fill();
+      ox.lineTo(oc.width, oc.height);
+      ox.lineTo(0, oc.height);
+      ox.closePath();
+      ox.fillStyle = `rgba(100,200,200,${al})`;
+      ox.fill();
     }
 
-    time += 0.01;
+    t += 0.01;
     requestAnimationFrame(draw);
-  }
-
-  draw();
+  })();
 }
