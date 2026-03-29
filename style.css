@@ -1,0 +1,220 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  width: 100%;
+  min-height: 100%;
+  height: 100vh;
+  background: #000;
+  overflow: hidden;
+}
+
+body.ocean-active {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  background: transparent;
+}
+
+/* ---- OCEAN SCREEN ---- */
+.ocean-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+}
+
+.parallax-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  background-image: url('./assets/background_main.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.parallax-bg::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: repeating-linear-gradient(
+    100deg,
+    transparent 0%, transparent 10%,
+    rgba(255,255,255,0.15) 11%, transparent 12%,
+    transparent 22%, rgba(255,255,255,0.1) 23%, transparent 24%
+  );
+  animation: rayShift 10s ease-in-out infinite alternate;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.parallax-bg::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: radial-gradient(
+    ellipse at 50% 20%,
+    rgba(120,220,200,0.3) 0%,
+    rgba(0,100,120,0.2) 40%,
+    transparent 70%
+  );
+  animation: waterPulse 7s ease-in-out infinite alternate;
+  z-index: 2;
+  pointer-events: none;
+}
+
+@keyframes rayShift {
+  0%   { transform: translateX(0px) rotate(0deg); opacity: 0.6; }
+  50%  { transform: translateX(80px) rotate(2deg); opacity: 1; }
+  100% { transform: translateX(-80px) rotate(-2deg); opacity: 0.6; }
+}
+
+@keyframes waterPulse {
+  0%   { opacity: 0.4; transform: scale(1); }
+  50%  { opacity: 0.9; transform: scale(1.05); }
+  100% { opacity: 0.4; transform: scale(1); }
+}
+
+.parallax-container {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  width: 300vw;
+  position: relative;
+}
+
+.content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  gap: 20vw;
+  padding: 0 10vw;
+}
+
+.card {
+  min-width: 300px;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  padding: 2rem;
+  color: white;
+  font-family: 'Rascal', cursive;
+}
+
+/* ---- INTRO SCREEN ---- */
+.intro-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+  transition: opacity 0.8s ease;
+  animation: fadeInPage 1.5s ease forwards;
+}
+
+.intro-screen.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.peekhole-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 11;
+  display: block;
+}
+
+.intro-content {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 12;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  pointer-events: none;
+}
+
+.intro-star {
+  width: min(70vw, 600px);
+  display: block;
+  margin: 0 auto;
+  transition: filter 0.4s ease;
+  pointer-events: all;
+}
+
+.intro-star:hover {
+  filter: drop-shadow(0 0 12px rgba(200,255,160,0.5));
+}
+
+.start-btn {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: filter 0.3s ease, transform 0.3s ease;
+  pointer-events: all;
+}
+
+.start-btn:hover {
+  transform: scale(1.04);
+  filter: drop-shadow(0 0 12px rgba(150,230,255,0.5));
+}
+
+.start-btn.clicked {
+  filter: drop-shadow(0 0 18px rgba(150,230,255,0.8));
+}
+
+.bubblee_wrap.img {
+  width: clamp(250px, 55vw, 500px);
+}
+
+.btn-text {
+  position: absolute;
+  font-family: 'Rascal', cursive;
+  font-size: clamp(1.4rem, 4vw, 2.4rem);
+  color: #f5e642;
+  text-align: center;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+@font-face {
+  font-family: 'Rascal';
+  src: url('./assets/Rascal.ttf') format('truetype');
+}
+
+@keyframes fadeInPage {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

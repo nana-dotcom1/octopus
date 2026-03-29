@@ -1,10 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial scale=1.0"
-        <title>lil octo</title>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body></body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>lil octo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <svg style="position:absolute;width:0;height:0">
+    <defs>
+      <filter id="grain">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="4" stitchTiles="stitch"/>
+        <feColorMatrix type="saturate" values="0"/>
+        <feBlend in="SourceGraphic" mode="overlay"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- OCEAN SCREEN — sits behind everything -->
+  <div class="ocean-screen" id="oceanScreen">
+    <div class="parallax-bg" id="parallaxBg"></div>
+    <div class="parallax-container">
+      <div class="content">
+        <div class="card">
+          <h2>Section One</h2>
+          <p>Beneath the waves...</p>
+        </div>
+        <div class="card">
+          <h2>Section Two</h2>
+          <p>Coral blooms in color...</p>
+        </div>
+        <div class="card">
+          <h2>Section Three</h2>
+          <p>Light from above...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTRO SCREEN — sits on top, gets peekhole cut into it -->
+  <div class="intro-screen" id="introScreen">
+    <canvas class="peekhole-canvas" id="peekholeCanvas"></canvas>
+    <div class="intro-content">
+      <img src="./assets/pinkinnk.png" class="intro-star" id="introStar" alt="lil octo star" />
+      <button class="start-btn" id="startBtn">
+        <img src="./assets/bubblee_wrap.png" class="bubble-img" alt="bubble wrap button" />
+        <span class="btn-text">heyyy let's start :)</span>
+      </button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
 </html>
