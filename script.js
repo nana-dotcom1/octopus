@@ -81,6 +81,7 @@ function playPop() {
 
 startBtn.addEventListener('click', () => {
   playPop();
+  startBgMusic(); 
   introScreen.style.display = 'none';
   canvas.style.display = 'none';
   startOcean();
@@ -157,10 +158,12 @@ function startOcean() {
     requestAnimationFrame(draw);
   })();
 }
+let bgAudio = null;
 
-const music = document.getElementById("bgMusic");
-
-document.getElementById("startBtn").addEventListener("click", () => {
-  music.play();
-});
+function startBgMusic() {
+  bgAudio = new Audio('music.mp3');
+  bgAudio.loop = true;
+  bgAudio.volume = 0.6;
+  bgAudio.play();
+}
 
