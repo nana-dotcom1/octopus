@@ -160,7 +160,7 @@ function startOcean() {
 
 const music = document.getElementById("bgMusic");
 
-document.getElementById("bubbleWrap").addEventListener("click", () => {
+document.getElementById("startBtn").addEventListener("click", () => {
   music.play();
 });
 
