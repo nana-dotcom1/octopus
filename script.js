@@ -87,6 +87,10 @@ startBtn.addEventListener('click', () => {
   startOcean();
 });
 
+document.querySelector('.intro-star').addEventListener('click', () => {
+  startBtn.click();
+});
+
 // ---- ocean canvas effects ----
 function startOcean() {
   const oc = document.createElement('canvas');
