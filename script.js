@@ -157,3 +157,10 @@ function startOcean() {
     requestAnimationFrame(draw);
   })();
 }
+
+const music = document.getElementById("bgMusic");
+
+document.getElementById("bubbleWrap").addEventListener("click", () => {
+  music.play();
+});
+
