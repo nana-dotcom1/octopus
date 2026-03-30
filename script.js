@@ -161,7 +161,7 @@ function startOcean() {
 let bgAudio = null;
 
 function startBgMusic() {
-  bgAudio = new Audio('music.mp3');
+  bgAudio = new Audio('assets/music.mp3');
   bgAudio.loop = true;
   bgAudio.volume = 0.6;
   bgAudio.play();
