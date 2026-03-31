@@ -373,11 +373,11 @@ html, body {
   top: -30vh;
   left: 25vw;
   width: min(25vw, 220px);
-  z-index: 6;
+  z-index: 999;
   display: none;
   pointer-events: none;
-  mix-blend-mode: screen;
   transition: top 2s ease-in, width 2s ease-in;
+  transform: scaleX(-1);
 }
 
 #scaredOcto {
@@ -425,6 +425,139 @@ html, body {
   transition: bottom 3s ease-out, opacity 1s ease-in 2s;
   bottom: -40vh;
   opacity: 0;
+}
+
+#shellBtn {
+  position: fixed;
+  bottom: 5vh;
+  right: 15vw;
+  width: 700px;
+  height: auto;
+  z-index: 5;
+  display: none;
+  cursor: pointer;
+  pointer-events: all;
+  animation: wiggle 2s ease-in-out infinite;
+  transition: transform 0.3s ease;
+}
+
+#shellBtn:hover {
+  transform: scale(1.1);
+}
+
+#pearl {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 300px;
+  height: auto;
+  z-index: 999;
+  display: none;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+#pearl.visible {
+  opacity: 1;
+}
+
+#turtle {
+  position: fixed;
+  top: 50%;
+  right: -30vw;
+  width: 600px;
+  height: auto;
+  z-index: 999;
+  display: none;
+  cursor: pointer;
+  pointer-events: all;
+  animation: wiggle 2s ease-in-out infinite;
+  transition: right 3s ease-out;
+}
+
+#turtle.swim-in {
+  right: 35vw;
+}
+
+#turtle.ride {
+  transition: right 4s ease-in-out;
+  right: 110vw;
+}
+
+#crab {
+  position: fixed;
+  bottom: -20vh;
+  left: 45vw;
+  width: min(900vw, 900px);
+  z-index: 6;
+  pointer-events: all;
+  cursor: pointer;
+  display: none;
+  animation: wiggle 0.8s ease-in-out infinite;
+}
+
+#crab.swim-in {
+  transition: bottom 2s ease-out;
+  bottom: 0vh;
+}
+
+#crab.caught {
+  transition: left 1.2s ease-in, bottom 1.2s ease-in, opacity 1.5s ease-in;
+  bottom: -18vh;
+  left: -28vw;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#cave {
+  position: fixed;
+  bottom: 0vh;
+  right: 10vw;
+  width: 1000px;
+  height: auto;
+  z-index: 5;
+  display: none;
+  cursor: pointer;
+  pointer-events: all;
+}
+
+#cave:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+#sleepOcto {
+  position: fixed;
+  bottom: -20vh;
+  left: 19vw;
+  width: min(80vh, 80vw);
+  z-index: 999;
+  display: none;
+  pointer-events: none;
+}
+
+#snail {
+  position: fixed;
+  bottom: -20vh;
+  left: 50vw;
+  width: 600px;
+  height: auto;
+  z-index: 999;
+  display: none;
+  cursor: pointer;
+  pointer-events: all;
+}
+
+#snail.swim-in {
+  transition: bottom 4s ease-out;
+  bottom: 20vh;
+}
+
+#snail.run-away {
+  transition: bottom 0.8s ease-in, left 0.8s ease-in;
+  bottom: -30vh;
+  left: 110vw;
 }
 
 @keyframes bigBounce {

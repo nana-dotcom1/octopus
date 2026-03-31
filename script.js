@@ -247,6 +247,7 @@ let camouflageReady  = false;
 let camouflageActive = false;
 let sealTimer        = null;
 let revealTimer      = null;
+let currentPredator  = 'seal';
 
 const octoEl = document.getElementById('octo');
 octoEl.style.pointerEvents = 'all';
@@ -263,6 +264,7 @@ function onOctoClick(e) {
   const octo     = document.getElementById('octo');
   const scaredEl = document.getElementById('scaredOcto');
   const seal     = document.getElementById('seal');
+  const shark    = document.getElementById('shark');
 
   octo.style.display     = 'none';
   scaredEl.style.display = 'block';
@@ -273,18 +275,17 @@ function onOctoClick(e) {
   clearTimeout(sealTimer);
   clearTimeout(revealTimer);
 
-  // seal stays 20 seconds then swims away
   sealTimer = setTimeout(() => {
-    seal.style.transition = 'top 4s ease-out';
-    seal.style.top = '130vh';
+    const activePredator = currentPredator === 'seal' ? seal : shark;
+    activePredator.style.transition = 'top 4s ease-out';
+    activePredator.style.top = '130vh';
     setTimeout(() => {
-      seal.style.display    = 'none';
-      seal.style.top        = '-30vh';
-      seal.style.transition = '';
+      activePredator.style.display    = 'none';
+      activePredator.style.top        = '-30vh';
+      activePredator.style.transition = '';
     }, 4000);
   }, 4000);
 
-// scared octo stays 25 seconds then normal octo comes back
   revealTimer = setTimeout(() => {
     scaredEl.style.display    = 'none';
     octo.style.display        = 'block';
@@ -295,7 +296,13 @@ function onOctoClick(e) {
     showSpeech("phew! that was so close...");
     setTimeout(() => {
       hideSpeech();
-      setTimeout(() => startJellyScenario(), 1500);
+      setTimeout(() => {
+        if (currentPredator === 'seal') {
+          startJellyScenario();
+        } else {
+          hideSpeech();
+        }
+      }, 1500);
     }, 4000);
   }, 5000);
 }
@@ -303,6 +310,7 @@ function onOctoClick(e) {
 octoEl.addEventListener('click', onOctoClick);
 
 function startCamouflageScenario() {
+  currentPredator = 'seal';
   const seal = document.getElementById('seal');
 
   seal.style.transition = '';
@@ -341,8 +349,6 @@ function startJellyScenario() {
   jelly.style.height     = 'auto';
   jelly.style.display    = 'block';
   jelly.style.transition = 'none';
-
-  // force browser to register start position before animating
   jelly.getBoundingClientRect();
 
   setTimeout(() => {
@@ -367,11 +373,248 @@ function startJellyScenario() {
           setTimeout(() => {
             jelly.style.display = 'none';
             jelly.style.opacity = '1';
+            setTimeout(() => startShellScenario(), 1500);
           }, 3500);
         }, 3000);
 
       }, { once: true });
 
     }, 2500);
+  }, 100);
+}
+
+function startShellScenario() {
+  const shell = document.getElementById('shellBtn');
+  const pearl = document.getElementById('pearl');
+
+  shell.style.display = 'block';
+  showSpeech("ooh a shiny shell!<br>i wonder what's inside?");
+
+  shell.addEventListener('click', () => {
+    shell.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+    shell.style.transform = 'scale(1.4)';
+    shell.style.opacity = '0';
+    showSpeech("a pearl! it's so pretty...");
+
+    pearl.style.display = 'block';
+    pearl.style.transform = 'translate(-50%, -50%)';
+    pearl.style.opacity = '0';
+    setTimeout(() => {
+      pearl.style.transition = 'opacity 1s ease';
+      pearl.style.opacity = '1';
+    }, 50);
+
+    setTimeout(() => {
+      shell.style.display = 'none';
+      shell.style.transform = '';
+      shell.style.opacity = '1';
+
+      setTimeout(() => {
+        hideSpeech();
+        setTimeout(() => {
+          pearl.style.transition = 'opacity 1s ease';
+          pearl.style.opacity = '0';
+          setTimeout(() => {
+            pearl.style.display = 'none';
+            setTimeout(() => startTurtleScenario(), 1500);
+          }, 1000);
+        }, 2000);
+      }, 3000);
+    }, 1500);
+
+  }, { once: true });
+}
+
+function startTurtleScenario() {
+  const turtle = document.getElementById('turtle');
+  const octo   = document.getElementById('octo');
+
+  turtle.style.cssText  = '';
+  turtle.style.position = 'fixed';
+  turtle.style.bottom   = '10vh';
+  turtle.style.left     = '110vw';
+  turtle.style.width    = '1200px';
+  turtle.style.height   = 'auto';
+  turtle.style.zIndex   = '999';
+  turtle.style.display  = 'block';
+  turtle.style.cursor   = 'pointer';
+  turtle.style.transition = 'none';
+
+  turtle.getBoundingClientRect();
+
+  setTimeout(() => {
+    turtle.style.transition = 'left 3s ease-out';
+    turtle.style.left       = '30vw';
+    showSpeech("a turtle! hop on,<br>let's go for a ride!");
+
+    setTimeout(() => {
+      showSpeech("click the turtle!");
+
+      turtle.addEventListener('click', () => {
+        hideSpeech();
+
+        octo.style.transition = 'none';
+        octo.style.position   = 'fixed';
+        octo.style.bottom     = '-20vh';
+        octo.style.left       = '20vw';
+
+        setTimeout(() => {
+          showSpeech("wheee!!");
+
+          turtle.style.transition = 'left 4s ease-in-out';
+          turtle.style.left       = '-150vw';
+          octo.style.transition   = 'left 4s ease-in-out';
+          octo.style.left         = '-150vw';
+
+          setTimeout(() => {
+            octo.style.transition = 'none';
+            octo.style.left       = '-28vw';
+            octo.style.bottom     = '-18vh';
+            turtle.style.display  = 'none';
+            hideSpeech();
+            setTimeout(() => startCrabScenario(), 1500);
+          }, 4500);
+
+        }, 800);
+
+      }, { once: true });
+
+    }, 2500);
+  }, 100);
+}
+
+function startCrabScenario() {
+  const crab = document.getElementById('crab');
+
+  showSpeech("oh a crab! pinchy pinchy!<br>try to catch it!");
+  crab.style.display = 'block';
+  setTimeout(() => crab.classList.add('swim-in'), 50);
+
+  crab.addEventListener('click', () => {
+    crab.classList.remove('swim-in');
+    crab.classList.add('caught');
+    hideSpeech();
+    setTimeout(() => {
+      crab.style.display = 'none';
+      crab.classList.remove('caught');
+      crab.style.opacity = '';
+      setTimeout(() => startCaveScenario(), 1500);
+    }, 1600);
+  }, { once: true });
+}
+
+function startCaveScenario() {
+  const cave     = document.getElementById('cave');
+  const octo     = document.getElementById('octo');
+  const sleepEl  = document.getElementById('sleepOcto');
+
+  cave.style.display = 'block';
+  showSpeech("i found a secret cave...<br>should we go in?");
+
+  setTimeout(() => {
+    showSpeech("click the cave!");
+
+    cave.addEventListener('click', () => {
+      hideSpeech();
+
+      octo.style.transition = 'opacity 0.8s ease';
+      octo.style.opacity    = '0';
+
+      setTimeout(() => {
+        octo.style.display = 'none';
+        octo.style.opacity = '1';
+
+        sleepEl.style.display = 'block';
+        showSpeech("zzz... taking a little nap...");
+
+        setTimeout(() => {
+          sleepEl.style.display = 'none';
+          octo.style.display    = 'block';
+          octo.style.transition = 'opacity 0.8s ease';
+          octo.style.opacity    = '0';
+          setTimeout(() => {
+            octo.style.opacity = '1';
+          }, 50);
+          cave.style.display = 'none';
+          showSpeech("that was a great nap!");
+          setTimeout(() => {
+            hideSpeech();
+            setTimeout(() => startSnailScenario(), 1500);
+          }, 3000);
+        }, 5000);
+
+      }, 800);
+
+    }, { once: true });
+
+  }, 2500);
+}
+
+function startSnailScenario() {
+  const snail = document.getElementById('snail');
+
+  snail.style.cssText   = '';
+  snail.style.position  = 'fixed';
+  snail.style.bottom    = '10vh';
+  snail.style.left      = '-20vw';
+  snail.style.width     = '300px';
+  snail.style.height    = 'auto';
+  snail.style.zIndex    = '999';
+  snail.style.display   = 'block';
+  snail.style.cursor    = 'pointer';
+  snail.style.transition = 'none';
+
+  snail.getBoundingClientRect();
+
+  showSpeech("whoa... that's the slowest thing<br>i've ever seen!");
+
+  setTimeout(() => {
+    snail.style.transition = 'left 25s linear';
+    snail.style.left       = '110vw';
+
+    setTimeout(() => {
+      showSpeech("click on it!");
+
+      snail.addEventListener('click', () => {
+        snail.style.transition = 'left 0.5s ease-in';
+        snail.style.left       = '150vw';
+        showSpeech("wait... it's FAST?!");
+
+        setTimeout(() => {
+          snail.style.display = 'none';
+          hideSpeech();
+          setTimeout(() => startSharkScenario(), 1500);
+        }, 600);
+
+      }, { once: true });
+
+    }, 2000);
+  }, 100);
+}
+
+function startSharkScenario() {
+  currentPredator = 'shark';
+  const shark = document.getElementById('shark');
+
+  shark.style.transition = '';
+  shark.style.top        = '-30vh';
+  shark.style.left       = '40vw';
+  shark.style.width      = '150px';
+  shark.style.height     = 'auto';
+  shark.style.display    = 'block';
+
+  setTimeout(() => {
+    shark.style.transition = 'top 4s ease-in, width 4s ease-in';
+    shark.style.top        = '30vh';
+    shark.style.width      = '900px';
+
+    showSpeech("oh no!! a shark!!<br>click me to hide!");
+
+    setTimeout(() => {
+      showSpeech("click me to camouflage!");
+      setTimeout(() => {
+        camouflageReady = true;
+      }, 1500);
+    }, 3000);
   }, 100);
 }
