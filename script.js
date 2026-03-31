@@ -85,6 +85,7 @@ startBtn.addEventListener('click', () => {
   introScreen.style.display = 'none';
   canvas.style.display = 'none';
   startOcean();
+  aboutBtn.style.display = 'block';
 });
 
 document.querySelector('.intro-star').addEventListener('click', () => {
@@ -171,3 +172,16 @@ function startBgMusic() {
   bgAudio.play();
 }
 
+const aboutBtn     = document.getElementById('aboutBtn');
+const aboutOverlay = document.getElementById('aboutOverlay');
+
+aboutBtn.addEventListener('click', () => {
+  aboutOverlay.classList.add('visible');
+});
+
+aboutOverlay.addEventListener('click', () => {
+  aboutOverlay.classList.remove('visible');
+});
+
+// show the button only after entering ocean
+const _origStartOcean = startOcean;
