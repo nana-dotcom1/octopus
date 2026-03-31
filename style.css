@@ -560,14 +560,39 @@ html, body {
   left: 110vw;
 }
 
+.octo:hover {
+  filter: drop-shadow(0 0 14px rgba(255, 182, 255, 0.8));
+  cursor: pointer;
+}
+
+.swimming-fish:hover {
+  filter: drop-shadow(0 0 10px rgba(100, 200, 255, 0.8));
+  cursor: pointer;
+}
+
+#jelly:hover {
+  filter: drop-shadow(0 0 14px rgba(150, 200, 255, 0.8));
+}
+
+#seal:hover {
+  filter: drop-shadow(0 0 14px rgba(200, 200, 255, 0.8));
+}
+
+#shark:hover {
+  filter: drop-shadow(0 0 14px rgba(255, 100, 100, 0.8));
+}
+
+#turtle:hover {
+  filter: drop-shadow(0 0 14px rgba(100, 255, 150, 0.8));
+}
+
+#snail:hover {
+  filter: drop-shadow(0 0 14px rgba(200, 150, 255, 0.8));
+}
+
 @keyframes bigBounce {
   0%, 100% { transform: translateY(0); }
   50%       { transform: translateY(-40px); }
-}
-
-@font-face {
-  font-family: 'Rascal';
-  src: url('./assets/Rascal.ttf') format('truetype');
 }
 
 @font-face {

@@ -300,7 +300,7 @@ function onOctoClick(e) {
         if (currentPredator === 'seal') {
           startJellyScenario();
         } else {
-          hideSpeech();
+          startEndScene();
         }
       }, 1500);
     }, 4000);
@@ -617,4 +617,36 @@ function startSharkScenario() {
       }, 1500);
     }, 3000);
   }, 100);
+}
+
+function startEndScene() {
+  const octo    = document.getElementById('octo');
+  const sleepEl = document.getElementById('sleepOcto');
+
+  showSpeech("okk that's my day...<br>i'm so tired, going to sleep now!");
+
+  setTimeout(() => {
+    octo.style.transition = 'opacity 1s ease';
+    octo.style.opacity    = '0';
+
+    setTimeout(() => {
+      octo.style.display     = 'none';
+      octo.style.opacity     = '1';
+      sleepEl.style.display  = 'block';
+      sleepEl.style.position = 'fixed';
+      sleepEl.style.bottom   = '-18vh';
+      sleepEl.style.left     = '-28vw';
+      sleepEl.style.width    = 'min(150vh, 150vw)';
+
+      document.body.style.transition = 'background 3s ease';
+      document.body.style.background = '#000';
+
+      showSpeech("good night... zzz");
+
+      setTimeout(() => {
+        hideSpeech();
+      }, 4000);
+
+    }, 1000);
+  }, 3000);
 }
