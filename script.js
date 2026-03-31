@@ -217,9 +217,25 @@ crabBtn.addEventListener('click', () => {
           clam.style.display = 'none';
           clam.classList.remove('caught');
               // show next speech bubble after clam disappears
+setTimeout(() => {
+  showSpeech("i'm still hungry,<br>let's catch some fishes!");
+
+  const fish = document.getElementById('fishGroup');
+  fish.style.display = 'block';
+  setTimeout(() => fish.classList.add('swim-in'), 50);
+
+  fish.addEventListener('click', () => {
+    fish.classList.remove('swim-in');
+    fish.classList.add('caught');
+    hideSpeech();
     setTimeout(() => {
-      showSpeech("i'm still hungry,<br>let's catch some fishes!");
-    }, 500);
+      fish.style.display = 'none';
+      fish.classList.remove('caught');
+      fish.style.opacity = '';
+    }, 1300);
+  }, { once: true });
+
+}, 500);
         }, 1600);
       }, { once: true });
 
