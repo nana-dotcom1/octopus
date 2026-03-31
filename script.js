@@ -284,7 +284,7 @@ function onOctoClick(e) {
     }, 4000);
   }, 4000);
 
-  // scared octo stays 25 seconds then normal octo comes back
+// scared octo stays 25 seconds then normal octo comes back
   revealTimer = setTimeout(() => {
     scaredEl.style.display    = 'none';
     octo.style.display        = 'block';
@@ -293,7 +293,10 @@ function onOctoClick(e) {
     octo.style.left           = '-28vw';
     camouflageActive          = false;
     showSpeech("phew! that was so close...");
-    setTimeout(() => hideSpeech(), 4000);
+    setTimeout(() => {
+      hideSpeech();
+      setTimeout(() => startJellyScenario(), 1500);
+    }, 4000);
   }, 5000);
 }
 
@@ -322,5 +325,53 @@ function startCamouflageScenario() {
         camouflageReady = true;
       }, 1500);
     }, 3000);
+  }, 100);
+}
+
+function startJellyScenario() {
+  const jelly = document.getElementById('jelly');
+
+  jelly.classList.remove('swim-in', 'swim-to-octo', 'swim-away');
+  jelly.style.position   = 'fixed';
+  jelly.style.bottom     = '-30vh';
+  jelly.style.left       = '30vw';
+  jelly.style.opacity    = '1';
+  jelly.style.zIndex     = '15';
+  jelly.style.width      = '1200px';
+  jelly.style.height     = 'auto';
+  jelly.style.display    = 'block';
+  jelly.style.transition = 'none';
+
+  // force browser to register start position before animating
+  jelly.getBoundingClientRect();
+
+  setTimeout(() => {
+    jelly.style.transition = 'bottom 3s ease-out';
+    jelly.style.bottom     = '25vh';
+    showSpeech("oh! a jellyfish!");
+
+    setTimeout(() => {
+      showSpeech("click on the jellyfish!");
+
+      jelly.addEventListener('click', () => {
+        jelly.style.transition = 'bottom 2s ease-in-out, left 2s ease-in-out';
+        jelly.style.bottom     = '10vh';
+        jelly.style.left       = '5vw';
+        showSpeech("i like you, you're cool!");
+
+        setTimeout(() => {
+          jelly.style.transition = 'bottom 3s ease-out, opacity 1s ease-in 2s';
+          jelly.style.bottom     = '-40vh';
+          jelly.style.opacity    = '0';
+          hideSpeech();
+          setTimeout(() => {
+            jelly.style.display = 'none';
+            jelly.style.opacity = '1';
+          }, 3500);
+        }, 3000);
+
+      }, { once: true });
+
+    }, 2500);
   }, 100);
 }
