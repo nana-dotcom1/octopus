@@ -337,7 +337,6 @@ html, body {
   pointer-events: all;
   cursor: pointer;
   display: none;
-  mix-blend-mode: screen;
   animation: wiggle 1.2s ease-in-out infinite;
   transition: right 2.5s ease-out;
 }
@@ -352,6 +351,50 @@ html, body {
   top: 80vh;
   opacity: 0;
   pointer-events: none;
+}
+
+#seal {
+  position: fixed;
+  top: 0vh;
+  left: 50vw;
+  width: min(500vw, 500px);
+  z-index: 6;
+  display: none;
+  pointer-events: none;
+}
+
+#seal.swim-in {
+  top: 50vh;
+  width: min(35vw, 320px);
+}
+
+#shark {
+  position: fixed;
+  top: -30vh;
+  left: 25vw;
+  width: min(25vw, 220px);
+  z-index: 6;
+  display: none;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  transition: top 2s ease-in, width 2s ease-in;
+}
+
+#scaredOcto {
+  position: fixed;
+  bottom: 0vh;
+  left: 5vw;
+  width: min(150vh, 150vw);
+  z-index: 2;
+  pointer-events: none;
+  display: none;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+#shark.swim-in {
+  top: 110vh;
+  width: min(45vw, 400px);
 }
 
 @keyframes bigBounce {

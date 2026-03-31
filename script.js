@@ -66,7 +66,7 @@ function playPop() {
   } catch(e) {}
 }
 
-// ---- speech bubble helper ----
+// ---- speech bubble ----
 function showSpeech(text) {
   const bubble = document.getElementById('speechBubble');
   const p      = document.getElementById('speechText');
@@ -203,9 +203,7 @@ crabBtn.addEventListener('click', () => {
 
     setTimeout(() => {
       const clam = document.getElementById('clam');
-
       showSpeech("i'm hungry let's go eat something,<br>try to catch the clam!");
-
       clam.style.display = 'block';
       setTimeout(() => clam.classList.add('swim-in'), 50);
 
@@ -216,30 +214,113 @@ crabBtn.addEventListener('click', () => {
         setTimeout(() => {
           clam.style.display = 'none';
           clam.classList.remove('caught');
-              // show next speech bubble after clam disappears
-setTimeout(() => {
-  showSpeech("i'm still hungry,<br>let's catch some fishes!");
+          clam.style.opacity = '';
 
-  const fish = document.getElementById('fishGroup');
-  fish.style.display = 'block';
-  setTimeout(() => fish.classList.add('swim-in'), 50);
+          setTimeout(() => {
+            showSpeech("i'm still hungry,<br>let's catch some fishes!");
+            const fish = document.getElementById('fishGroup');
+            fish.style.display = 'block';
+            setTimeout(() => fish.classList.add('swim-in'), 50);
 
-  fish.addEventListener('click', () => {
-    fish.classList.remove('swim-in');
-    fish.classList.add('caught');
-    hideSpeech();
-    setTimeout(() => {
-      fish.style.display = 'none';
-      fish.classList.remove('caught');
-      fish.style.opacity = '';
-    }, 1300);
-  }, { once: true });
+            fish.addEventListener('click', () => {
+              fish.classList.remove('swim-in');
+              fish.classList.add('caught');
+              hideSpeech();
+              setTimeout(() => {
+                fish.style.display = 'none';
+                fish.classList.remove('caught');
+                fish.style.opacity = '';
+                setTimeout(() => startCamouflageScenario(), 1500);
+              }, 1500);
+            }, { once: true });
 
-}, 500);
+          }, 500);
         }, 1600);
       }, { once: true });
 
     }, 800);
-
   }, 2000);
 });
+
+// ---- camouflage scenario ----
+let camouflageReady  = false;
+let camouflageActive = false;
+let sealTimer        = null;
+let revealTimer      = null;
+
+const octoEl = document.getElementById('octo');
+octoEl.style.pointerEvents = 'all';
+octoEl.style.cursor = 'pointer';
+
+function onOctoClick(e) {
+  e.stopPropagation();
+  console.log('octo clicked, camouflageReady:', camouflageReady, 'camouflageActive:', camouflageActive);
+  if (!camouflageReady || camouflageActive) return;
+
+  camouflageReady  = false;
+  camouflageActive = true;
+
+  const octo     = document.getElementById('octo');
+  const scaredEl = document.getElementById('scaredOcto');
+  const seal     = document.getElementById('seal');
+
+  octo.style.display     = 'none';
+  scaredEl.style.display = 'block';
+  scaredEl.style.opacity = '1';
+  scaredEl.style.visibility = 'visible';
+  hideSpeech();
+
+  clearTimeout(sealTimer);
+  clearTimeout(revealTimer);
+
+  // seal stays 20 seconds then swims away
+  sealTimer = setTimeout(() => {
+    seal.style.transition = 'top 4s ease-out';
+    seal.style.top = '130vh';
+    setTimeout(() => {
+      seal.style.display    = 'none';
+      seal.style.top        = '-30vh';
+      seal.style.transition = '';
+    }, 4000);
+  }, 4000);
+
+  // scared octo stays 25 seconds then normal octo comes back
+  revealTimer = setTimeout(() => {
+    scaredEl.style.display    = 'none';
+    octo.style.display        = 'block';
+    octo.style.position       = 'fixed';
+    octo.style.bottom         = '-18vh';
+    octo.style.left           = '-28vw';
+    camouflageActive          = false;
+    showSpeech("phew! that was so close...");
+    setTimeout(() => hideSpeech(), 4000);
+  }, 5000);
+}
+
+octoEl.addEventListener('click', onOctoClick);
+
+function startCamouflageScenario() {
+  const seal = document.getElementById('seal');
+
+  seal.style.transition = '';
+  seal.style.top        = '-30vh';
+  seal.style.left       = '40vw';
+  seal.style.width      = '150px';
+  seal.style.height     = 'auto';
+  seal.style.display    = 'block';
+
+  setTimeout(() => {
+    seal.style.transition = 'top 4s ease-in, width 4s ease-in';
+    seal.style.top        = '30vh';
+    seal.style.width      = '900px';
+
+    showSpeech("oh no!! i'm scared...");
+
+    setTimeout(() => {
+      showSpeech("click me to camouflage!");
+      setTimeout(() => {
+        camouflageReady = true;
+      }, 1500);
+    }, 3000);
+  }, 100);
+}
