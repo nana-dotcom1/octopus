@@ -3,7 +3,6 @@ const startBtn    = document.getElementById('startBtn');
 const canvas      = document.getElementById('peekholeCanvas');
 const ctx         = canvas.getContext('2d');
 
-// ---- canvas size ----
 function resizeCanvas() {
   canvas.width  = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -11,7 +10,6 @@ function resizeCanvas() {
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
-// ---- peekhole ----
 let mx = -999, my = -999;
 let radius = 0, targetR = 0;
 
@@ -24,19 +22,13 @@ document.addEventListener('mousemove', e => {
 document.addEventListener('mouseleave', () => { targetR = 0; });
 
 (function drawLoop() {
-  // clear to fully transparent first
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   radius += (targetR - radius) * 0.1;
 
   if (radius > 0.5) {
-    // draw black everywhere EXCEPT the hole using a cutout shape
     ctx.globalCompositeOperation = 'source-over';
-    
-    // fill entire canvas black
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // cut the hole out — this makes it transparent = ocean shows through
     ctx.globalCompositeOperation = 'destination-out';
     const hole = ctx.createRadialGradient(mx, my, 0, mx, my, radius);
     hole.addColorStop(0,    'rgba(0,0,0,1)');
@@ -47,12 +39,8 @@ document.addEventListener('mouseleave', () => { targetR = 0; });
     ctx.arc(mx, my, radius, 0, Math.PI * 2);
     ctx.fillStyle = hole;
     ctx.fill();
-
-    // reset composite before next frame
     ctx.globalCompositeOperation = 'source-over';
-
   } else {
-    // no mouse — full black
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
@@ -60,7 +48,6 @@ document.addEventListener('mouseleave', () => { targetR = 0; });
   requestAnimationFrame(drawLoop);
 })();
 
-// ---- pop sound ----
 function playPop() {
   try {
     const ac  = new (window.AudioContext || window.webkitAudioContext)();
@@ -79,20 +66,36 @@ function playPop() {
   } catch(e) {}
 }
 
+// ---- speech bubble helper ----
+function showSpeech(text) {
+  const bubble = document.getElementById('speechBubble');
+  const p      = document.getElementById('speechText');
+  p.innerHTML  = text;
+  bubble.style.display = 'block';
+  setTimeout(() => bubble.classList.add('visible'), 50);
+}
+
+function hideSpeech() {
+  const bubble = document.getElementById('speechBubble');
+  bubble.classList.remove('visible');
+  setTimeout(() => bubble.style.display = 'none', 600);
+}
+
 startBtn.addEventListener('click', () => {
   playPop();
-  startBgMusic(); 
+  startBgMusic();
   introScreen.style.display = 'none';
   canvas.style.display = 'none';
   startOcean();
   aboutBtn.style.display = 'block';
+  crabBtn.style.display = 'block';
+  document.getElementById('crabText').style.display = 'block';
 });
 
 document.querySelector('.intro-star').addEventListener('click', () => {
   startBtn.click();
 });
 
-// ---- ocean canvas effects ----
 function startOcean() {
   const oc = document.createElement('canvas');
   oc.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;z-index:1;pointer-events:none;mix-blend-mode:screen;opacity:0.5;';
@@ -114,7 +117,6 @@ function startOcean() {
 
   (function draw() {
     ox.clearRect(0, 0, oc.width, oc.height);
-
     beams.forEach((b, i) => {
       const x   = b.ox * oc.width;
       const len = oc.height * 1.4;
@@ -163,8 +165,8 @@ function startOcean() {
     requestAnimationFrame(draw);
   })();
 }
-let bgAudio = null;
 
+let bgAudio = null;
 function startBgMusic() {
   bgAudio = new Audio('assets/music.mp3');
   bgAudio.loop = true;
@@ -174,6 +176,7 @@ function startBgMusic() {
 
 const aboutBtn     = document.getElementById('aboutBtn');
 const aboutOverlay = document.getElementById('aboutOverlay');
+const crabBtn      = document.getElementById('crabBtn');
 
 aboutBtn.addEventListener('click', () => {
   aboutOverlay.classList.add('visible');
@@ -183,5 +186,44 @@ aboutOverlay.addEventListener('click', () => {
   aboutOverlay.classList.remove('visible');
 });
 
-// show the button only after entering ocean
-const _origStartOcean = startOcean;
+crabBtn.addEventListener('click', () => {
+  const octo = document.getElementById('octo');
+
+  octo.src = './assets/happyocto.png';
+  octo.classList.add('happy');
+  octo.style.animation = 'bigBounce 0.5s ease-in-out 4';
+
+  crabBtn.style.display = 'none';
+  document.getElementById('crabText').style.display = 'none';
+
+  setTimeout(() => {
+    octo.src = './assets/octopus.png';
+    octo.classList.remove('happy');
+    octo.style.animation = 'float 3s ease-in-out infinite';
+
+    setTimeout(() => {
+      const clam = document.getElementById('clam');
+
+      showSpeech("i'm hungry let's go eat something,<br>try to catch the clam!");
+
+      clam.style.display = 'block';
+      setTimeout(() => clam.classList.add('swim-in'), 50);
+
+      clam.addEventListener('click', () => {
+        clam.classList.remove('swim-in');
+        clam.classList.add('caught');
+        hideSpeech();
+        setTimeout(() => {
+          clam.style.display = 'none';
+          clam.classList.remove('caught');
+              // show next speech bubble after clam disappears
+    setTimeout(() => {
+      showSpeech("i'm still hungry,<br>let's catch some fishes!");
+    }, 500);
+        }, 1600);
+      }, { once: true });
+
+    }, 800);
+
+  }, 2000);
+});
