@@ -597,9 +597,10 @@ html, body {
 
 @font-face {
   font-family: 'BrightCurls';
-  src: url('./assets/BrightCurls.otf') format('opentype');
+  src: url('./assets/BrightCurls.woff2') format('woff2'),
+       url('./assets/BrightCurls.otf') format('opentype');
+  font-display: swap;
 }
-
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
