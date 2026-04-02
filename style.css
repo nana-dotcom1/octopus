@@ -597,8 +597,12 @@ html, body {
 
 @font-face {
   font-family: 'BrightCurls';
+<<<<<<< HEAD
   src: url('./assets/BrightCurls.woff2') format('woff2'),
        url('./assets/BrightCurls.otf') format('opentype');
+=======
+  src: url('./assets/BrightCurls.otf') format('opentype');
+>>>>>>> 5d1efd53b5d98963ec46562b2954eeba0fa3fafa
   font-display: swap;
 }
 @keyframes fadeIn {
