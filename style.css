@@ -204,7 +204,7 @@ html, body {
   padding: 30% 32%;
   margin-right: 9%;
   text-align: center;
-  font-family: 'BrightCurls', sans-serif;
+  font-family: 'BrightCurls';
   color: #3a3a2a;
 }
 
@@ -241,7 +241,7 @@ html, body {
   top: 163px;
   left: 31%;
   transform: translateX(-50%);
-  font-family: 'BrightCurls', sans-serif;
+  font-family: 'BrightCurls';
   font-size: clamp(18px, 1.4vw, 14px);
   color: #fff;
   text-shadow: 0 0 8px rgba(0,0,0,0.6);
@@ -306,7 +306,7 @@ html, body {
   left: 20%;
   width: 68%;
   transform: translateY(-50%);
-  font-family: 'BrightCurls', sans-serif;
+  font-family: 'BrightCurls';
   font-size: clamp(28px, 1.4vw, 14px);
   color: #3a3a2a;
   text-align: center;
@@ -597,13 +597,9 @@ html, body {
 
 @font-face {
   font-family: 'BrightCurls';
-<<<<<<< HEAD
-  src: url('./assets/BrightCurls.woff2') format('woff2'),
-       url('./assets/BrightCurls.otf') format('opentype');
-=======
-  src: url('./assets/BrightCurls.otf') format('opentype');
->>>>>>> 5d1efd53b5d98963ec46562b2954eeba0fa3fafa
-  font-display: swap;
+  src: url('./assets/BrightCurls.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
 }
 @keyframes fadeIn {
   from { opacity: 0; }
