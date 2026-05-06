@@ -60,21 +60,6 @@ html, body {
   opacity: 0.85;
 }
 
-@keyframes swimAcross {
-  0%   { left: 110%; }
-  100% { left: -65%; }
-}
-
-@keyframes rayShift {
-  0%   { transform: translateX(0px);   opacity: 0.6; }
-  100% { transform: translateX(-80px); opacity: 0.8; }
-}
-
-@keyframes waterPulse {
-  0%   { opacity: 0.4; }
-  100% { opacity: 0.8; }
-}
-
 .parallax-container {
   position: relative;
   height: 100vh;
@@ -132,7 +117,6 @@ html, body {
   pointer-events: none;
   transition: left 0.1s linear;
   animation: float 3s ease-in-out infinite;
-  
 }
 
 #aboutBtn {
@@ -150,12 +134,11 @@ html, body {
 #aboutBtn img {
   width: min(500vw, 500px);
   height: auto;
-  transition: transform 0.3s ease, filter 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
 #aboutBtn:hover img {
   transform: scale(1.08);
-  filter: drop-shadow(0 0 10px rgba(150,230,255,0.6));
 }
 
 #aboutOverlay {
@@ -229,11 +212,11 @@ html, body {
 #crabBtn img {
   width: min(600vw, 600px);
   height: auto;
-  transition: transform 0.3s ease, filter 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
 #crabBtn:hover img {
-  filter: drop-shadow(0 0 14px rgb(255, 77, 0));
+  transform: scale(1.08);
 }
 
 #crabBtn span {
@@ -316,16 +299,6 @@ html, body {
 
 #clamText.visible {
   opacity: 1;
-}
-
-@keyframes wiggle {
-  0%, 100% { transform: translateX(0) rotate(-4deg); }
-  50%       { transform: translateX(12px) rotate(4deg); }
-}
-
-#crabBtn:hover .crab-inner img {
-  transform: scale(1.08) rotate(-5deg);
-  filter: drop-shadow(0 0 14px rgba(227,131,91,0.6));
 }
 
 #fishGroup {
@@ -520,11 +493,11 @@ html, body {
   display: none;
   cursor: pointer;
   pointer-events: all;
+  transition: transform 0.3s ease;
 }
 
 #cave:hover {
   transform: scale(1.05);
-  transition: transform 0.3s ease;
 }
 
 #sleepOcto {
@@ -560,39 +533,39 @@ html, body {
   left: 110vw;
 }
 
-.octo:hover {
-  filter: drop-shadow(0 0 14px rgba(255, 182, 255, 0.8));
-  cursor: pointer;
-}
-
-.swimming-fish:hover {
-  filter: drop-shadow(0 0 10px rgba(100, 200, 255, 0.8));
-  cursor: pointer;
-}
-
-#jelly:hover {
-  filter: drop-shadow(0 0 14px rgba(150, 200, 255, 0.8));
-}
-
-#seal:hover {
-  filter: drop-shadow(0 0 14px rgba(200, 200, 255, 0.8));
-}
-
-#shark:hover {
-  filter: drop-shadow(0 0 14px rgba(255, 100, 100, 0.8));
-}
-
-#turtle:hover {
-  filter: drop-shadow(0 0 14px rgba(100, 255, 150, 0.8));
-}
-
-#snail:hover {
-  filter: drop-shadow(0 0 14px rgba(200, 150, 255, 0.8));
+@keyframes wiggle {
+  0%, 100% { transform: translateX(0) rotate(-4deg); }
+  50%       { transform: translateX(12px) rotate(4deg); }
 }
 
 @keyframes bigBounce {
   0%, 100% { transform: translateY(0); }
   50%       { transform: translateY(-40px); }
+}
+
+@keyframes swimAcross {
+  0%   { left: 110%; }
+  100% { left: -65%; }
+}
+
+@keyframes rayShift {
+  0%   { transform: translateX(0px); opacity: 0.6; }
+  100% { transform: translateX(-80px); opacity: 0.8; }
+}
+
+@keyframes waterPulse {
+  0%   { opacity: 0.4; }
+  100% { opacity: 0.8; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-20px); }
 }
 
 @font-face {
@@ -601,18 +574,35 @@ html, body {
   font-weight: normal;
   font-style: normal;
 }
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+
+/* transition overlay */
+#transitionOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(ellipse at center,
+    #000 0%, #000 15%,
+    rgba(0,0,0,0.92) 35%,
+    rgba(0,0,0,0.6) 55%,
+    rgba(0,0,0,0.2) 75%,
+    transparent 100%
+  );
+  filter: url(#grain);
+  transform: scale(0);
+  transition:
+    transform 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.4s ease;
 }
 
-@keyframes float {
-    0%, 100% {
-        /* Start and end at the original vertical position */
-        transform: translateY(0);
-    }
-    50% {
-        /* Move the object up by 20 pixels halfway through the animation */
-        transform: translateY(-20px); 
-    }
+#transitionOverlay.fade-in {
+  opacity: 1;
+  transform: scale(3);
+  pointer-events: all;
+}
+
+#transitionOverlay.fade-out {
+  opacity: 0;
+  transform: scale(3);
 }
